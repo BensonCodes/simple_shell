@@ -1,28 +1,47 @@
 #include "header.h"
 
-void _putchar(const char* character)
+/**
+ * _putchar - custom putchar function prints character
+ * @character: operand holding characte to be printed out
+ *
+ * Return: returns mnothing
+ */
+
+void _putchar(const char *character)
 {
 	write(1, character, strlen(character));
 }
+
+/**
+  * showprom - displays the prompt of our shell
+  *
+  * Return: returns mnothing
+  */
 
 void showprom(void)
 {
 	_putchar("ShaBen Shell# ");
 }
 
+/**
+  * executer - executes command parsed
+  * @com: operand holding the command to be parsed
+  *
+  * Return: returns mnothing
+  */
+
 void executer(const char *com)
 {
-	char* command = strdup(com);
-	char* prefix = "/bin/";
+	char *command = strdup(com);
+	char *prefix = "/bin/";
 	int n = 0;
-	char* delim = " ";
-	char* tokens[100];
-	int newlen;
-	char* newcom = NULL;
-
+	char *delim = " ";
+	char *tokens[100];
+	int newlen = strlen(prefix) + strlen(tokens[0]) + 1;
+	char *newcom = (char *)malloc(newlen * sizeof(char));
 	pid_t c_process = fork();
 
-	if (c_process == -1) 
+	if (c_process == -1)
 	{
 		perror("error during fork");
 		exit(EXIT_FAILURE);
@@ -30,13 +49,11 @@ void executer(const char *com)
 	if (c_process == 0)
 	{
 		tokens[n] = strtok(command, delim);
-		newlen = strlen(prefix) + strlen(tokens[0]) + 1;
-		while(tokens[n])
+		while (tokens[n])
 		{
 			n++;
 			tokens[n] = strtok(NULL, delim);
 		}
-		newcom = (char*)malloc(newlen * sizeof(char));
 		if (newcom == NULL)
 		{
 			perror("Memory alloc fail");
@@ -53,10 +70,17 @@ void executer(const char *com)
 	else
 	{
 		wait(NULL);
-		if (newcom != NULL)
-			free(newcom);
+		free(newcom);
 	}
 }
+
+/**
+  * readcom - reads the input of user
+  * @com: operand holding the inputed command of a user
+  * @size: size of the com array
+  *
+  * Return: returns mnothing
+  */
 
 void readcom(char *com, size_t size)
 {
@@ -73,14 +97,20 @@ void readcom(char *com, size_t size)
 			exit(EXIT_FAILURE);
 		}
 	}
-	com[strcspn(com, "\n")] = '\0'; 
+	com[strcspn(com, "\n")] = '\0';
 }
+
+/**
+ * main - creates a basic shell
+ *
+ * Return: returns 0 on success
+ */
 
 int main(void)
 {
-	
+
 	char com[200];
-	
+
 	while (1)
 	{
 		showprom();
@@ -89,5 +119,5 @@ int main(void)
 	}
 
 
-	return 0;
+	return (0);
 }

@@ -2,7 +2,7 @@
 
 void _putchar(const char* character)
 {
-	write(1, &character, strlen(character));
+	write(1, character, strlen(character));
 }
 
 void showprom(void)
@@ -12,7 +12,14 @@ void showprom(void)
 
 void executer(const char *com)
 {
-	char* command = strdup(com); 
+	char* command = strdup(com);
+	char* prefix = "/bin/";
+	int n = 0;
+	char* delim = " ";
+	char* tokens[100];
+	int newlen;
+	char* newcom = NULL;
+
 	pid_t c_process = fork();
 
 	if (c_process == -1) 
@@ -22,24 +29,32 @@ void executer(const char *com)
 	}
 	if (c_process == 0)
 	{
-		int n = 0;
-		char* delim = " ";
-		char* tokens[100];
 		tokens[n] = strtok(command, delim);
-		
+		newlen = strlen(prefix) + strlen(tokens[0]) + 1;
 		while(tokens[n])
 		{
 			n++;
 			tokens[n] = strtok(NULL, delim);
 		}
+		newcom = (char*)malloc(newlen * sizeof(char));
+		if (newcom == NULL)
+		{
+			perror("Memory alloc fail");
+			exit(EXIT_FAILURE);
+		}
+		strcpy(newcom, prefix);
+		strcat(newcom, tokens[0]);
+		tokens[0] = newcom;
 		tokens[n] = NULL;
-		execve("ls", tokens, NULL);
+		execve(tokens[0], tokens, NULL);
 		perror("at execve");
 		exit(EXIT_FAILURE);
 	}
 	else
 	{
 		wait(NULL);
+		if (newcom != NULL)
+			free(newcom);
 	}
 }
 

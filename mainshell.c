@@ -37,8 +37,7 @@ void executer(const char *com)
 	int n = 0;
 	char *delim = " ";
 	char *tokens[100];
-	int newlen = strlen(prefix) + strlen(tokens[0]) + 1;
-	char *newcom = (char *)malloc(newlen * sizeof(char));
+	char *newcom = NULL;
 	pid_t c_process = fork();
 
 	if (c_process == -1)
@@ -54,6 +53,7 @@ void executer(const char *com)
 			n++;
 			tokens[n] = strtok(NULL, delim);
 		}
+		newcom = (char *)malloc((strlen(prefix) + strlen(tokens[0]) + 1) * sizeof(char));
 		if (newcom == NULL)
 		{
 			perror("Memory alloc fail");
